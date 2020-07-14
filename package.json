@@ -1,0 +1,27 @@
+{
+  "name": "server-journal",
+  "version": "1.0.0",
+  "description": "Server-Journal",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "atob": "^2.1.2",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "md5": "^2.2.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jeff930/Server-Journal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Jeff930/Server-Journal/issues"
+  },
+  "homepage": "https://github.com/Jeff930/Server-Journal#readme"
+}
