@@ -175,7 +175,6 @@ app.post('/create-entry', bodyParser.json(), (req, res) => {
                                     });
                                }  
                             }
-                           
                         });
                     }
                 });
