@@ -9,10 +9,10 @@ const path = require('path');
 const port = process.env.PORT || 5000;
 
 const connection = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'chandrajournal'
+    host: '198.12.249.79',
+    user: 'candracp_journal',
+    password: 'P@55W012D!',
+    database: 'candracp_journal'
 });
 
 // Body parser
@@ -441,4 +441,4 @@ app.get('/delete-entry/:id', (req, res) => {
     });
 });
 
-app.listen(port, () => console.log(`App listening at http://localhost:${port}`))
+app.listen(port, () => console.log(`App listening at 198.12.249.79:${port}`))
