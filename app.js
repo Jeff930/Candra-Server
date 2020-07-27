@@ -428,7 +428,7 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
 app.get('/delete-entry/:id', (req, res) => {
     const id = req.params.id;
     console.log(id);
-    var sql = "DELETE FROM `Entries` WHERE `EntryNo` = '"+id+"'";
+    var sql = "DELETE FROM `entries` WHERE `EntryNo` = '"+id+"'";
     connection.query(sql, (err, result) => {
         if (err) {
             console.log(err);
