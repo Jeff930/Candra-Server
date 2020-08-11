@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const file = require("fs") 
 var atob = require('atob');
 const path = require('path');
+const https = require('https');
 
 const port = process.env.PORT || 5000;
 
@@ -14,6 +15,13 @@ const connection = mysql.createPool({
     password: 'P@55W012D!',
     database: 'candracp_journal'
 });
+
+// const connection = mysql.createPool({
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'chandrajournal'
+// });
 
 // Body parser
 app.use(bodyParser.json({ limit: '50mb', extended: true }));
@@ -441,4 +449,8 @@ app.get('/delete-entry/:id', (req, res) => {
     });
 });
 
-app.listen(port, () => console.log(`App listening at 198.12.249.79:${port}`))
+https.createServer({
+    key: file.readFileSync('journal4life.key'),
+    cert: file.readFileSync('journal4life.crt'),
+    ca: ['gd1.crt', 'gd2.crt']
+  }, app).listen(port, () => console.log(`App listening at 198.12.249.79:${port}`))
