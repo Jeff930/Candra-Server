@@ -406,9 +406,7 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
                             if (err) {
                                 res.send(err);
                             } else{
-                                console.log("Directory created successfully!");
-                    
-                              
+                                console.log("Directory created successfully!");                              
                                     var filename = result['userId'] + '-' + i + ".jpeg";
                                     var base64Data = atob(JSON.parse(image)).replace("-", "+").replace("_", "/");
                                     base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
@@ -443,6 +441,46 @@ app.get('/delete-entry/:id', (req, res) => {
             res.json({ "error": err });
         }
         else {
+            var entryDir ='./images/entries/' + id;
+            // res.send(entryDir);
+            file.readdir( entryDir, function(error, files) {  
+                if (error){
+                    console.log(error);
+                    res.json({ "error": error });
+                }else{
+                    var totalFiles = files.length; 
+                    console.log(totalFiles);
+                    if (totalFiles !=0){
+                        for (var i = 0;i<totalFiles;i++ ){
+                            var filename = id + '-' + i + ".jpeg";
+                            var filePath = entryDir+'/'+filename;
+                            console.log(filePath);
+                            file.unlink(filePath, function(err) {
+                                if(err===null){
+                                    console.log("File Deleted Successfully!");
+                                }else{
+                                    res.json({ "error": err });
+                                }
+                            });
+                       }  
+                       file.rmdir(entryDir, function(err) {
+                        if(err===null){
+                            console.log("Directory Deleted Successfully!");
+                        }else{
+                            res.json({ "error": err });
+                        }
+                    });
+                    }else{
+                        file.rmdir(entryDir, function(err) {
+                            if(err===null){
+                                console.log("Directory Deleted Successfully!");
+                            }else{
+                                res.json({ "error": err });
+                            }
+                        });
+                    }
+                }
+            });
             console.log(result);
             res.send(result);
         }
