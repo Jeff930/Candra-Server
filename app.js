@@ -487,6 +487,22 @@ app.get('/delete-entry/:id', (req, res) => {
     });
 });
 
+app.get('/get-entry-image-total/:id', (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+    var entryDir ='./images/entries/' + id;
+    file.readdir( entryDir, function(error, files) {  
+        if (error){
+            console.log(error);
+            res.json({ "error": error });
+        }else{
+            var totalFiles = files.length; 
+            console.log(totalFiles);
+            res.json({totalFiles});
+        }
+    });
+});
+
 https.createServer({
     key: file.readFileSync('journal4life.key'),
     cert: file.readFileSync('journal4life.crt'),
