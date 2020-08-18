@@ -9,19 +9,19 @@ const https = require('https');
 
 const port = process.env.PORT || 5000;
 
-const connection = mysql.createPool({
-    host: '198.12.249.79',
-    user: 'candracp_journal',
-    password: 'P@55W012D!',
-    database: 'candracp_journal'
-});
-
 // const connection = mysql.createPool({
-//     host: 'localhost',
-//     user: 'root',
-//     password: '',
-//     database: 'chandrajournal'
+//     host: '198.12.249.79',
+//     user: 'candracp_journal',
+//     password: 'P@55W012D!',
+//     database: 'candracp_journal'
 // });
+
+const connection = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'chandrajournal'
+});
 
 // Body parser
 app.use(bodyParser.json({ limit: '50mb', extended: true }));
@@ -420,9 +420,7 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
                                             console.log("Error Encountered: ",err);
                                         }
                                     });
-                               
                             }
-                           
                         });
                     }
                 });
@@ -442,7 +440,6 @@ app.get('/delete-entry/:id', (req, res) => {
         }
         else {
             var entryDir ='./images/entries/' + id;
-            // res.send(entryDir);
             file.readdir( entryDir, function(error, files) {  
                 if (error){
                     console.log(error);
@@ -496,9 +493,14 @@ app.get('/get-entry-image-total/:id', (req, res) => {
             console.log(error);
             res.json({ "error": error });
         }else{
-            var totalFiles = files.length; 
-            console.log(totalFiles);
-            res.json({totalFiles});
+            var totalFiles = files.length;
+            var images = []; 
+            for (var i = 0;i<totalFiles;i++){
+                var imagePath ='./images/entries/' + id + '/' + id + '-'+ i +".jpeg";
+                imageAsBase64 = file.readFileSync(imagePath, 'base64');
+                images.push("data:image/jpeg;base64,"  + imageAsBase64);
+            }
+            res.json(images);
         }
     });
 });
