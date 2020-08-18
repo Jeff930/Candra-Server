@@ -9,19 +9,19 @@ const https = require('https');
 
 const port = process.env.PORT || 5000;
 
-// const connection = mysql.createPool({
-//     host: '198.12.249.79',
-//     user: 'candracp_journal',
-//     password: 'P@55W012D!',
-//     database: 'candracp_journal'
-// });
-
 const connection = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'chandrajournal'
+    host: '198.12.249.79',
+    user: 'candracp_journal',
+    password: 'P@55W012D!',
+    database: 'candracp_journal'
 });
+
+// const connection = mysql.createPool({
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'chandrajournal'
+// });
 
 // Body parser
 app.use(bodyParser.json({ limit: '50mb', extended: true }));
