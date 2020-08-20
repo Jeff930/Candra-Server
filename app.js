@@ -9,19 +9,19 @@ const https = require('https');
 
 const port = process.env.PORT || 5000;
 
-const connection = mysql.createPool({
-    host: '198.12.249.79',
-    user: 'candracp_journal',
-    password: 'P@55W012D!',
-    database: 'candracp_journal'
-});
-
 // const connection = mysql.createPool({
-//     host: 'localhost',
-//     user: 'root',
-//     password: '',
-//     database: 'chandrajournal'
+//     host: '198.12.249.79',
+//     user: 'candracp_journal',
+//     password: 'P@55W012D!',
+//     database: 'candracp_journal'
 // });
+
+const connection = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'chandrajournal'
+});
 
 // Body parser
 app.use(bodyParser.json({ limit: '50mb', extended: true }));
@@ -87,8 +87,7 @@ app.get('/user-details/:userId', (req, res) => {
         " `LastName`," +
         " `Birthdate`," +
         " `EmailAddress`," +
-        " `LifeVerse`," +
-        " `VerseContent`" +
+        " `Phone`" +
         " FROM `users` WHERE `UserId` = '" + userId + "'";
     connection.query(sql, (err, result) => {
         if (err) {
@@ -102,6 +101,26 @@ app.get('/user-details/:userId', (req, res) => {
     });
 });
 
+app.get('/profile-image/:userId', (req,res)=>{
+    const id = req.params.userId;
+    var entryDir ='./images/profiles/' + id;
+    file.readdir( entryDir, function(error, files) {  
+        if (error){
+            console.log(error);
+            res.json({ "error": error });
+        }else{
+            var totalFiles = files.length;
+            var images = []; 
+            for (var i = 0;i<totalFiles;i++){
+                var imagePath ='./images/profiles/' + id + '/' + id +".jpeg";
+                imageAsBase64 = file.readFileSync(imagePath, 'base64');
+                images.push("data:image/jpeg;base64,"  + imageAsBase64);
+            }
+            res.json(images);
+        }
+    });
+})
+
 app.post('/update-user-details', bodyParser.json(), (req, res) => {
     const form = req.body;
     console.log("Form: ",form);
@@ -111,8 +130,7 @@ app.post('/update-user-details', bodyParser.json(), (req, res) => {
         " `LastName` = '" + form.lastname + "'," +
         " `Birthdate` = '" + form.birthdate + "'," +
         " `EmailAddress` = '" + form.email + "'," +
-        " `LifeVerse` = '" + form.lifeverse + "'," +
-        " `VerseContent` = '" + form.versecontent + "'" +
+        " `Phone` = '" + form.phone + "'" +
         "  WHERE `UserId` = '" + form.userid + "'";
 
     connection.query(sql, (err, result) => {
@@ -129,9 +147,9 @@ app.post('/update-user-details', bodyParser.json(), (req, res) => {
 
 app.post('/user-signup', bodyParser.json(), (req, res) => {
     const form = req.body;
-    var sql = "INSERT INTO `users` (`UserId`,`UserName`, `FirstName`, `LastName`,`EmailAddress`, `Password`,`CreatedTimestamp`) " +
+    var sql = "INSERT INTO `users` (`UserId`,`UserName`, `FirstName`, `LastName`,`EmailAddress`, `Password`,`Birthdate`,`CreatedTimestamp`) " +
         "VALUES (NULL, '" + form.username + "','" + form.firstname + "','" + form.lastname + "'," +
-        " '" + form.email + "','" + form.password + "', CURRENT_TIMESTAMP)";
+        " '" + form.email + "','" + form.password + "','" + form.birthdate + "', CURRENT_TIMESTAMP)";
     connection.query(sql, (err, result) => {
         if (err) {
             console.log(err);
