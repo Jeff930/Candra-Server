@@ -6,6 +6,7 @@ const file = require("fs")
 var atob = require('atob');
 const path = require('path');
 const https = require('https');
+nodeMailer = require('nodemailer');
 
 const port = process.env.PORT || 5000;
 
@@ -585,6 +586,31 @@ app.get('/get-entry-image-total/:id', (req, res) => {
         }
     });
 });
+
+app.get('/send-email', function (req, res) {
+    let transporter = nodeMailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            // should be replaced with real sender's account
+            user: 'journal4life.com@gmail.com',
+            pass: 'Pa55word!'
+        }
+    });
+    let mailOptions = {
+        // should be replaced with real recipient's account
+        to: 'dmijeff9@gmail.com',
+        subject: "Sample",
+        text: "Hi there! It looks like you're trying to recover your account. Your verification number is 657392."
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message %s sent: %s', info.messageId, info.response);
+    });
+  });
 
 https.createServer({
     key: file.readFileSync('journal4life.key'),
