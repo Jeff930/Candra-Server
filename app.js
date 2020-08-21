@@ -458,44 +458,31 @@ app.post('/update-entry', bodyParser.json(), (req, res) => {
 
 app.post('/upload-profile', bodyParser.json(), (req, res) => {
     const form = req.body;
-    var sql = "UPDATE `entries` SET" +
-        " `Title` = '" + form.title + "'," +
-        " `Content` = '" + form.content + "'" +
-        "  WHERE `EntryNo` = '" + form.entryNo + "'";
-
-    connection.query(sql, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.json({ "error": err });
-        }
-        else {
-            console.log(result);
-            var entryDir ='./images/profiles/' + result['userId'];
-                file.access(entryDir, function(err) {
-                    if (err.code === 'ENOENT') {
-                        file.mkdir(entryDir,function(err){
-                            if (err) {
-                                res.send(err);
-                            } else{
-                                console.log("Directory created successfully!");                              
-                                    var filename = result['userId'] + '-' + i + ".jpeg";
-                                    var base64Data = atob(JSON.parse(image)).replace("-", "+").replace("_", "/");
-                                    base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
+    var image = form.image;
+    var entryDir ='./images/profiles/' + form.userId;
+    file.access(entryDir, function(err) {            
+        if (err.code === 'ENOENT') {
+            file.mkdir(entryDir,function(err){
+                if (err) {
+                    res.send(err);
+                } else{
+                    console.log("Directory created successfully!");                      
+                    var filename = form.userId + ".jpeg";
                                     
-                                    var filePath = entryDir+'/'+filename;
-                    
-                                    file.writeFile(filePath, base64Data, 'base64', function(err) {
-                                        if(err===null){
-                                            console.log("Profile Image Created Successfully!");
-                                        }else{
-                                            console.log("Error Encountered: ",err);
-                                        }
-                                    });
-                            }
-                        });
-                    }
-                });
-           res.send('{"Success": true}');
+                    var base64Data = atob(JSON.parse(image)).replace("-", "+").replace("_", "/");
+                    base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
+                                    
+                    var filePath = entryDir+'/'+filename; 
+
+                    file.writeFile(filePath, base64Data, 'base64', function(err) {
+                        if(err===null){
+                            console.log("Profile Image Created Successfully!");
+                        }else{
+                            console.log("Error Encountered: ",err);
+                        }
+                    });
+                }
+            });
         }
     });
 });
