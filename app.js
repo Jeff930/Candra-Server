@@ -460,29 +460,52 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
     const form = req.body;
     var image = form.image;
     var entryDir ='./images/profiles/' + form.userId;
-    file.access(entryDir, function(err) {            
-        if (err.code === 'ENOENT') {
-            file.mkdir(entryDir,function(err){
-                if (err) {
-                    res.send(err);
-                } else{
-                    console.log("Directory created successfully!");                      
-                    var filename = form.userId + ".jpeg";
-                                    
+    file.access(entryDir, function(err) {          
+        if (err){
+            if (err.code === 'ENOENT') {
+                file.mkdir(entryDir,function(err){
+                    if (err) {
+                        res.send(err);
+                    } else{
+                        console.log("Directory created successfully!");                      
+                        var filename = form.userId + ".jpeg";
+                                        
+                        var base64Data = atob(JSON.parse(image)).replace("-", "+").replace("_", "/");
+                        base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
+                                        
+                        var filePath = entryDir+'/'+filename; 
+    
+                        file.writeFile(filePath, base64Data, 'base64', function(err) {
+                            if(err===null){
+                                console.log("Profile Image Created Successfully!");
+                            }else{
+                                console.log("Error Encountered: ",err);
+                            }
+                        });
+                    }
+                });
+            }else{
+                res.json(err);
+            }
+        }else{      
+            var filename = form.userId + ".jpeg";
+            var filePath = entryDir+'/'+filename; 
+            file.unlink(filePath, function(err) {
+                if(err===null){
+                    console.log("File Deleted Successfully!");                 
                     var base64Data = atob(JSON.parse(image)).replace("-", "+").replace("_", "/");
-                    base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
-                                    
-                    var filePath = entryDir+'/'+filename; 
-
+                    base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");              
                     file.writeFile(filePath, base64Data, 'base64', function(err) {
                         if(err===null){
-                            console.log("Profile Image Created Successfully!");
+                            res.json("Profile Image Created Successfully!");
                         }else{
-                            console.log("Error Encountered: ",err);
+                            res.json("Error Encountered: ",err);
                         }
                     });
+                }else{
+                    res.json({ "error": err });
                 }
-            });
+            });       
         }
     });
 });
