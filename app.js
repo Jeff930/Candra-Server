@@ -79,6 +79,33 @@ app.get('/user-login/:form', (req, res) => {
     });
 });
 
+app.post('/verify', bodyParser.json(), (req, res) => {
+    const form = req.body;
+    var sql = "SELECT `UserId`," +
+        " `UserName`," +
+        " `FirstName`," +
+        " `LastName`," +
+        " `EmailAddress`," +
+        " `CreatedTimestamp`" +
+        " FROM `users` WHERE `EmailAddress` = '" + form.email + "'" +
+        " AND `verification` = '" + form.num + "'";
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.json({ "error": err });
+        }
+        else {
+            if (result == []){
+                console.log(result);
+                res.json("No matching account found");
+            }else{
+                console.log(result);
+                res.json("Success");
+            }
+        }
+    });
+});
+
 app.get('/user-details/:userId', (req, res) => {
     const userId = req.params.userId;
     console.log(userId);
@@ -587,28 +614,51 @@ app.get('/get-entry-image-total/:id', (req, res) => {
     });
 });
 
-app.get('/send-email', function (req, res) {
-    let transporter = nodeMailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            // should be replaced with real sender's account
-            user: 'journal4life.com@gmail.com',
-            pass: 'Pa55word!'
+app.post('/send-email',bodyParser.json(), (req, res) => {
+    const email = req.body.email;
+    console.log(email);
+    var sql = "SELECT * FROM `users` WHERE `EmailAddress` = '"+email+"'";
+    connection.query(sql, (err, result) => {
+        if (err){
+            res.json(err);
+        }else{
+            if (result == []){
+                res.json("No matching email found.");
+            }else{
+                var verification = Math.floor(100000 + Math.random() * 900000);
+                var sql = "UPDATE `users` SET `verification` = " + verification + " WHERE `EmailAddress` = '"+email+"'";
+                connection.query(sql, (err, result) => {
+                    if (err){
+                        res.json(err);
+                    }else{
+                        let transporter = nodeMailer.createTransport({
+                            host: 'smtp.gmail.com',
+                            port: 465,
+                            secure: true,
+                            auth: {
+                                // should be replaced with real sender's account
+                                user: 'journal4life.com@gmail.com',
+                                pass: 'Pa55word!'
+                            }
+                        });
+                        let mailOptions = {
+                            // should be replaced with real recipient's account
+                            to: email,
+                            subject: "Journal4Life Email Verification",
+                            text: "Hi there! It looks like you're trying to recover your account. Your verification number is " + verification +". For your account's security, please avoid sharing your verification number with anyone."
+                        };
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                                res.json(error);
+                            }else{
+                                res.json("Success");
+                            }
+                            console.log('Message %s sent: %s', info.messageId, info.response);
+                        });
+                    }
+                });
+            }
         }
-    });
-    let mailOptions = {
-        // should be replaced with real recipient's account
-        to: 'dmijeff9@gmail.com',
-        subject: "Sample",
-        text: "Hi there! It looks like you're trying to recover your account. Your verification number is 657392."
-    };
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
-        }
-        console.log('Message %s sent: %s', info.messageId, info.response);
     });
   });
 
