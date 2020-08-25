@@ -11,6 +11,7 @@
   "dependencies": {
     "atob": "^2.1.2",
     "body-parser": "^1.19.0",
+    "btoa": "^1.2.1",
     "express": "^4.17.1",
     "md5": "^2.2.1",
     "mysql": "^2.18.1",
