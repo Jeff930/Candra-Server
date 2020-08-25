@@ -134,18 +134,19 @@ app.get('/profile-image/:userId', (req,res)=>{
     var entryDir ='./images/profiles/' + id;
     file.readdir( entryDir, function(error, files) {  
         if (error){
-            console.log(error);
-            res.json({ "error": error });
+            console.log("error");
+            res.send("error");
         }else{
             var totalFiles = files.length;
             var images = []; 
             for (var i = 0;i<totalFiles;i++){
                 var imagePath ='./images/profiles/' + id + '/' + id +".jpeg";
-                imageAsBase64 = file.readFileSync(imagePath, 'base64');
-                images.push("data:image/jpeg;base64,"  + imageAsBase64);
+                imageBase64 = file.readFileSync(imagePath, "base64")
+                images.push("data:image/jpeg;base64,"  + imageBase64);
+                res.json(images);
+                }
             }
-            res.json(images);
-        }
+        
     });
 })
 
@@ -484,6 +485,23 @@ app.post('/update-entry', bodyParser.json(), (req, res) => {
     });
 });
 
+app.post('/update-password', bodyParser.json(), (req, res) => {
+    const form = req.body;
+    var sql = "UPDATE `users` SET" +
+        " `Password` = '" + form.password +
+        "'  WHERE `EmailAddress` = '" + form.email + "'";
+
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.json({ "error": err });
+        }else {
+            console.log(result);
+            res.json("Success");
+        }
+    });
+});
+
 app.post('/upload-profile', bodyParser.json(), (req, res) => {
     const form = req.body;
     var image = form.image;
@@ -493,7 +511,7 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
             if (err.code === 'ENOENT') {
                 file.mkdir(entryDir,function(err){
                     if (err) {
-                        res.send(err);
+                        res.json("error");
                     } else{
                         console.log("Directory created successfully!");                      
                         var filename = form.userId + ".jpeg";
@@ -506,14 +524,17 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
                         file.writeFile(filePath, base64Data, 'base64', function(err) {
                             if(err===null){
                                 console.log("Profile Image Created Successfully!");
+                                res.json("success");
                             }else{
                                 console.log("Error Encountered: ",err);
+                                res.json("error");
                             }
                         });
                     }
                 });
             }else{
-                res.json(err);
+                console.log("called");
+                res.json("error");
             }
         }else{      
             var filename = form.userId + ".jpeg";
@@ -525,13 +546,21 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
                     base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");              
                     file.writeFile(filePath, base64Data, 'base64', function(err) {
                         if(err===null){
-                            res.json("Profile Image Created Successfully!");
+                            res.json("success");
                         }else{
-                            res.json("Error Encountered: ",err);
+                            res.json("error");
                         }
                     });
                 }else{
-                    res.json({ "error": err });
+                    var base64Data = atob(JSON.parse(image)).replace("-", "+").replace("_", "/");
+                    base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");              
+                    file.writeFile(filePath, base64Data, 'base64', function(err) {
+                        if(err===null){
+                            res.json("success");
+                        }else{
+                            res.json("error");
+                        }
+                    });
                 }
             });       
         }
