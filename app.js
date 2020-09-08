@@ -10,19 +10,19 @@ nodeMailer = require('nodemailer');
 
 const port = process.env.PORT || 5000;
 
-// const connection = mysql.createPool({
-//     host: '198.12.249.79',
-//     user: 'candracp_journal',
-//     password: 'P@55W012D!',
-//     database: 'candracp_journal'
-// });
-
 const connection = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'chandrajournal'
+    host: '198.12.249.79',
+    user: 'candracp_journal',
+    password: 'P@55W012D!',
+    database: 'candracp_journal'
 });
+
+// const connection = mysql.createPool({
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'chandrajournal'
+// });
 
 // Body parser
 app.use(bodyParser.json({ limit: '50mb', extended: true }));
@@ -88,14 +88,15 @@ app.post('/verify', bodyParser.json(), (req, res) => {
         " `EmailAddress`," +
         " `CreatedTimestamp`" +
         " FROM `users` WHERE `EmailAddress` = '" + form.email + "'" +
-        " AND `verification` = '" + form.num + "'";
+        " AND `verification` = '" + form.number + "'";
+    console.log(sql);
     connection.query(sql, (err, result) => {
         if (err) {
             console.log(err);
             res.json({ "error": err });
         }
         else {
-            if (result == []){
+            if (!result.length){
                 console.log(result);
                 res.json("No matching account found");
             }else{
@@ -135,7 +136,7 @@ app.get('/profile-image/:userId', (req,res)=>{
     file.readdir( entryDir, function(error, files) {  
         if (error){
             console.log("error");
-            res.send("error");
+            res.json("error");
         }else{
             var totalFiles = files.length;
             var images = []; 
@@ -144,9 +145,8 @@ app.get('/profile-image/:userId', (req,res)=>{
                 imageBase64 = file.readFileSync(imagePath, "base64")
                 images.push("data:image/jpeg;base64,"  + imageBase64);
                 res.json(images);
-                }
             }
-        
+        } 
     });
 })
 
@@ -647,11 +647,13 @@ app.post('/send-email',bodyParser.json(), (req, res) => {
     const email = req.body.email;
     console.log(email);
     var sql = "SELECT * FROM `users` WHERE `EmailAddress` = '"+email+"'";
+    console.log(sql);
     connection.query(sql, (err, result) => {
         if (err){
             res.json(err);
         }else{
-            if (result == []){
+            if (!result.length){
+                console.log(result);
                 res.json("No matching email found.");
             }else{
                 var verification = Math.floor(100000 + Math.random() * 900000);
@@ -682,7 +684,6 @@ app.post('/send-email',bodyParser.json(), (req, res) => {
                             }else{
                                 res.json("Success");
                             }
-                            console.log('Message %s sent: %s', info.messageId, info.response);
                         });
                     }
                 });
