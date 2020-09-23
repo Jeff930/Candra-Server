@@ -218,9 +218,10 @@ app.post('/create-entry', bodyParser.json(), (req, res) => {
                                     var filename = result['insertId'] + '-' + i + ".jpeg";
                                     var base64Data = atob(JSON.parse(images)[i]).replace("-", "+").replace("_", "/");
                                     base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
-                                    
+                                    base64Data = base64Data.replace(/^data:image\/jpg;base64,/, "");
+                                    base64Data = base64Data.replace(/^data:image\/png;base64,/, "");
                                     var filePath = entryDir+'/'+filename;
-                    
+                                    
                                     file.writeFile(filePath, base64Data, 'base64', function(err) {
                                         if(err===null){
                                             console.log("Files Created Successfully!");
@@ -412,6 +413,8 @@ app.post('/update-entry', bodyParser.json(), (req, res) => {
                                     var filename = form.entryNo + '-' + i + ".jpeg";
                                     var base64Data = atob(JSON.parse(images)[i]).replace("-", "+").replace("_", "/");
                                     base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
+                                    base64Data = base64Data.replace(/^data:image\/jpg;base64,/, "");
+                                    base64Data = base64Data.replace(/^data:image\/png;base64,/, "");
                                     var filePath = entryDir+'/'+filename;
                                     file.writeFile(filePath, base64Data, 'base64', function(err) {
                                         if(err===null){
@@ -446,7 +449,10 @@ app.post('/update-entry', bodyParser.json(), (req, res) => {
                                                 var filename = form.entryNo + '-' + i + ".jpeg";
                                                 var base64Data = atob(JSON.parse(images)[i]).replace("-", "+").replace("_", "/");
                                                 base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
+                                                base64Data = base64Data.replace(/^data:image\/jpg;base64,/, "");
+                                                base64Data = base64Data.replace(/^data:image\/png;base64,/, "");
                                                 var filePath = entryDir+'/'+filename;
+                                                
                                                 file.writeFile(filePath, base64Data, 'base64', function(err) {
                                                     if(err===null){
                                                         console.log("Files Created Successfully!");
@@ -465,7 +471,10 @@ app.post('/update-entry', bodyParser.json(), (req, res) => {
                                     var filename = form.entryNo + '-' + i + ".jpeg";
                                     var base64Data = atob(JSON.parse(images)[i]).replace("-", "+").replace("_", "/");
                                     base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
+                                    base64Data = base64Data.replace(/^data:image\/jpg;base64,/, "");
+                                    base64Data = base64Data.replace(/^data:image\/png;base64,/, "");
                                     var filePath = entryDir+'/'+filename;
+                                    
                                     file.writeFile(filePath, base64Data, 'base64', function(err) {
                                         if(err===null){
                                             console.log("Files Created Successfully!");
@@ -518,6 +527,8 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
                                         
                         var base64Data = atob(JSON.parse(image)).replace("-", "+").replace("_", "/");
                         base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
+                        base64Data = base64Data.replace(/^data:image\/jpg;base64,/, "");
+                        base64Data = base64Data.replace(/^data:image\/png;base64,/, "");
                                         
                         var filePath = entryDir+'/'+filename; 
     
@@ -543,7 +554,9 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
                 if(err===null){
                     console.log("File Deleted Successfully!");                 
                     var base64Data = atob(JSON.parse(image)).replace("-", "+").replace("_", "/");
-                    base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");              
+                    base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");  
+                    base64Data = base64Data.replace(/^data:image\/jpg;base64,/, "");
+                    base64Data = base64Data.replace(/^data:image\/png;base64,/, "");            
                     file.writeFile(filePath, base64Data, 'base64', function(err) {
                         if(err===null){
                             res.json("success");
@@ -553,7 +566,10 @@ app.post('/upload-profile', bodyParser.json(), (req, res) => {
                     });
                 }else{
                     var base64Data = atob(JSON.parse(image)).replace("-", "+").replace("_", "/");
-                    base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");              
+                    base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, ""); 
+                    base64Data = base64Data.replace(/^data:image\/jpg;base64,/, "");
+                    base64Data = base64Data.replace(/^data:image\/png;base64,/, "");         
+
                     file.writeFile(filePath, base64Data, 'base64', function(err) {
                         if(err===null){
                             res.json("success");
