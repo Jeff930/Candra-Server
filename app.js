@@ -196,9 +196,9 @@ app.post('/user-signup', bodyParser.json(), (req, res) => {
 app.post('/create-entry', bodyParser.json(), (req, res) => {
     const form = req.body;
     var images = form.images;
-    var sql = "INSERT INTO `entries` (`EntryNo`,`Title`, `Content`, `CreatedTimestamp`,`UserId`) " +
-        "VALUES (NULL, '" + form.title + "','" + form.content + "',CURRENT_TIMESTAMP," +
-        " '" + form.userId+ "')";
+    var sql = "INSERT INTO `entries` (`EntryNo`,`Title`, `Content`, `CreatedTimestamp`,`hasImage`,`UserId`) " +
+        "VALUES (NULL, '" + form.title + "','" + form.content + "',CURRENT_TIMESTAMP, '" + form.hasImage + 
+        "', '" + form.userId+ "')";
     connection.query(sql, (err, result) => {
         if (err) {
             console.log(err);
@@ -249,13 +249,15 @@ app.post('/get-entries', bodyParser.json(), (req, res) => {
     var sqlCount = "SELECT `EntryNo`," +
         " `Title`," +
         " `Content`," +
-        " `CreatedTimestamp`" +
+        " `CreatedTimestamp`," +
+        " `hasImage`" +
         " FROM `entries` WHERE `UserId` = '" + id + "'";
 
     var sql = "SELECT `EntryNo`," +
         " `Title`," +
         " `Content`," +
-        " `CreatedTimestamp`" +
+        " `CreatedTimestamp`," +
+        " `hasImage`" +
         " FROM `entries` WHERE `UserId` = '" + id + "'" +
         " ORDER BY `CreatedTimestamp` DESC" +
         " LIMIT " + limit + " OFFSET " + offset;
@@ -297,13 +299,15 @@ app.post('/search-entries', bodyParser.json(), (req, res) => {
     var sqlCount = "SELECT `EntryNo`," +
         " `Title`," +
         " `Content`," +
-        " `CreatedTimestamp`" +
+        " `CreatedTimestamp`," +
+        " `hasImage`" +
         " FROM `entries` WHERE `UserId` = '" + id + "' AND `Title` LIKE '%" + searchKey + "%'";
 
     var sql = "SELECT `EntryNo`," +
         " `Title`," +
         " `Content`," +
-        " `CreatedTimestamp`" +
+        " `CreatedTimestamp`," +
+        " `hasImage`" +
         " FROM `entries` WHERE `UserId` = '" + id + "' AND `Title` LIKE '%" + searchKey + "%'" +
         " ORDER BY `CreatedTimestamp` DESC" +
         " LIMIT " + limit + " OFFSET " + offset;
@@ -345,7 +349,8 @@ app.post('/filter-entries', bodyParser.json(), (req, res) => {
     var sqlCount = "SELECT `EntryNo`," +
         " `Title`," +
         " `Content`," +
-        " `CreatedTimestamp`" +
+        " `CreatedTimestamp`," +
+        " `hasImage`" +
         " FROM `entries` WHERE `UserId` = '" + id + 
         "' AND date(`CreatedTimestamp`) = '"+date+
         "' ORDER BY `CreatedTimestamp` DESC";
@@ -353,7 +358,8 @@ app.post('/filter-entries', bodyParser.json(), (req, res) => {
     var sql = "SELECT `EntryNo`," +
         " `Title`," +
         " `Content`," +
-        " `CreatedTimestamp`" +
+        " `CreatedTimestamp`," +
+        " `hasImage`" +
         " FROM `entries` WHERE `UserId` = '" + id + 
         "' AND date(`CreatedTimestamp`) = '"+date+
         "' ORDER BY `CreatedTimestamp` DESC"+
@@ -390,7 +396,8 @@ app.post('/update-entry', bodyParser.json(), (req, res) => {
     var images = form.images;
     var sql = "UPDATE `entries` SET" +
         " `Title` = '" + form.title + "'," +
-        " `Content` = '" + form.content + "'" +
+        " `Content` = '" + form.content + "'," +
+        " `hasImage` = '" + form.hasImage + "'" +
         "  WHERE `EntryNo` = '" + form.entryNo + "'";
 
     connection.query(sql, (err, result) => {
