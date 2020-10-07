@@ -501,6 +501,73 @@ app.post('/update-entry', bodyParser.json(), (req, res) => {
     });
 });
 
+app.post('/add-image', bodyParser.json(), (req, res) => {
+    const form = req.body;
+    var images = form.images;
+            
+    var entryDir ='./images/entries/' + form.entryNo;
+    file.access(entryDir, function(err) {
+        if (err) {
+            if (err.code === 'ENOENT') {
+                file.mkdir(entryDir,function(err){
+                    if (err) {
+                        res.send(err);
+                    }else{
+                        console.log("Directory created successfully!");
+                        for (var i = 0;i<JSON.parse(images).length;i++ ){
+                            var filename = form.entryNo + '-' + form.index + ".jpeg";
+                            var base64Data = atob(JSON.parse(images)[form.index]).replace("-", "+").replace("_", "/");
+                            base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
+                            base64Data = base64Data.replace(/^data:image\/jpg;base64,/, "");
+                            base64Data = base64Data.replace(/^data:image\/png;base64,/, "");
+                            var filePath = entryDir+'/'+filename;
+                            file.writeFile(filePath, base64Data, 'base64', function(err) {
+                                if(err===null){
+                                    console.log("Files Created Successfully!");
+                                }else{
+                                    console.log("Error Encountered: ",err);
+                                }
+                            });
+                        }     
+                    }
+                });
+            }else{
+                res.json({"error": err}) 
+            }
+        }else{
+            file.readdir( entryDir, function(error, files) {  
+                if (error){
+                    console.log(error);
+                    res.json({ "error": error });
+                }else{
+                    var totalFiles = files.length; 
+                    console.log(totalFiles);
+                   
+                    for (var i = 0;i<JSON.parse(images).length;i++ ){
+                        var filename = form.entryNo + '-' + i + ".jpeg";
+                        var base64Data = atob(JSON.parse(images)[i]).replace("-", "+").replace("_", "/");
+                        base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
+                        base64Data = base64Data.replace(/^data:image\/jpg;base64,/, "");
+                        base64Data = base64Data.replace(/^data:image\/png;base64,/, "");
+                        var filePath = entryDir+'/'+filename;
+                                   
+                        file.writeFile(filePath, base64Data, 'base64', function(err) {
+                            if(err===null){
+                                console.log("Files Created Successfully!");
+                            }else{
+                                console.log("Error Encountered: ",err);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        console.log(result);
+        res.send(result);
+    });
+});
+
+
 app.post('/update-password', bodyParser.json(), (req, res) => {
     const form = req.body;
     var sql = "UPDATE `users` SET" +
