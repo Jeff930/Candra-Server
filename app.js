@@ -214,7 +214,7 @@ app.post('/create-entry', bodyParser.json(), (req, res) => {
                                 res.send(err);
                             } else{
                                 console.log("Directory created successfully!");
-                                for (var i = 0;i<JSON.parse(images).length;i++ ){
+                                for (let i = 0;i<JSON.parse(images).length;i++ ){
                                     var filename = result['insertId'] + '-' + i + ".jpeg";
                                     var base64Data = atob(JSON.parse(images)[i]).replace("-", "+").replace("_", "/");
                                     base64Data = base64Data.replace(/^data:image\/jpeg;base64,/, "");
@@ -226,7 +226,7 @@ app.post('/create-entry', bodyParser.json(), (req, res) => {
                                         if(err===null){
                                             console.log("Files Created Successfully!");
                                         }else{
-                                            console.log("Error Encountered: ",err);
+                                            res.send("Error Encountered: ",err);
                                         }
                                     });
                                }  
